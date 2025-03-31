@@ -1,0 +1,18 @@
+{
+  "name": "tetris",
+  "version": "1.0.0",
+  "description": "A modern, responsive Tetris game with sleek UI/UX design, built using HTML5, JavaScript, and Tailwind CSS.",
+  "main": "tetris.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@capacitor/android": "^7.1.0",
+    "@capacitor/cli": "^7.1.0",
+    "@capacitor/core": "^7.1.0",
+    "@capacitor/ios": "^7.1.0"
+  }
+}
