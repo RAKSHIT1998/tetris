@@ -88,9 +88,72 @@
             align-items: center;
             margin: 1rem 0;
         }
+
+        .input-field {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--neon-purple);
+            box-shadow: 0 0 5px var(--neon-purple);
+        }
+
+        .btn {
+            background: rgba(179, 0, 255, 0.3);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background: rgba(179, 0, 255, 0.5);
+        }
+
+        .leaderboard-item {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 0.5rem;
+            margin-bottom: 0.5rem;
+            border-radius: 0.5rem;
+        }
     </style>
 </head>
 <body class="grid-bg">
+    <!-- Auth Modal -->
+    <div id="auth-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="glass-effect p-8 rounded-xl max-w-md w-full mx-4">
+            <h2 class="text-2xl font-bold text-white mb-6 neon-text text-center">Sign In / Register</h2>
+            
+            <!-- Auth Form -->
+            <form id="auth-form" class="space-y-4">
+                <input type="text" id="username" placeholder="Username" class="input-field" required>
+                <input type="email" id="email" placeholder="Email" class="input-field" required>
+                <input type="password" id="password" placeholder="Password" class="input-field" required>
+                
+                <!-- Difficulty Selection -->
+                <div class="mb-4">
+                    <label class="text-white block mb-2">Select Difficulty:</label>
+                    <select id="difficulty" class="input-field">
+                        <option value="easy">Easy</option>
+                        <option value="medium" selected>Medium</option>
+                        <option value="hard">Hard</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn w-full">Start Playing</button>
+            </form>
+        </div>
+    </div>
+
     <!-- Top Banner Ad -->
     <div class="ad-container w-full max-w-[728px] mx-auto mt-4">
         <ins class="adsbygoogle"
@@ -119,16 +182,34 @@
                         <p class="text-gray-400 text-sm mb-1">LEVEL</p>
                         <p id="level" class="text-2xl font-bold text-white">1</p>
                     </div>
+                    <div class="text-center">
+                        <p class="text-gray-400 text-sm mb-1">HIGH SCORE</p>
+                        <p id="highscore" class="text-2xl font-bold text-white">0</p>
+                    </div>
                 </div>
             </div>
 
             <!-- Game Area -->
-            <div class="flex flex-col md:flex-row gap-8 items-center">
+            <div class="flex flex-col md:flex-row gap-8 items-start">
+                <!-- Leaderboard -->
+                <div class="glass-effect rounded-lg p-4 w-64">
+                    <h3 class="text-white text-xl mb-4">Leaderboard</h3>
+                    <div id="leaderboard" class="space-y-2">
+                        <!-- Leaderboard items will be added here -->
+                    </div>
+                </div>
+
                 <!-- Main Game Board -->
                 <div id="game-board" class="glass-effect rounded-lg p-2 neon-border"></div>
                 
                 <!-- Side Panel -->
                 <div class="flex flex-col gap-6">
+                    <!-- Player Info -->
+                    <div class="glass-effect rounded-lg p-4">
+                        <p class="text-gray-400 text-sm mb-2">PLAYER</p>
+                        <p id="player-name" class="text-white font-bold"></p>
+                    </div>
+
                     <!-- Next Piece Preview -->
                     <div class="glass-effect rounded-lg p-4">
                         <p class="text-gray-400 text-sm mb-2">NEXT PIECE</p>
