@@ -8,48 +8,122 @@
     <!-- Google AdSense -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5156494121502262" crossorigin="anonymous"></script>
     
-    <!-- Social Media SDKs -->
-    <!-- Facebook SDK -->
-    <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
-    
-    <!-- Google Sign-In -->
-    <script src="https://apis.google.com/js/platform.js" async defer></script>
-    <meta name="google-signin-client_id" content="YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com">
-    
-    <!-- Apple Sign-In -->
-    <script type="text/javascript" src="https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js"></script>
-    
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     
     <style>
-        /* Previous styles remain unchanged */
+        :root {
+            --neon-blue: #00f2ff;
+            --neon-purple: #b300ff;
+            --dark-bg: #0a0a0a;
+        }
         
-        .social-btn {
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: var(--dark-bg);
+            touch-action: none;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        .game-block {
+            width: 30px;
+            height: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(5px);
+            transition: background-color 0.2s ease;
+        }
+
+        .neon-text {
+            text-shadow: 0 0 10px var(--neon-blue),
+                         0 0 20px var(--neon-blue),
+                         0 0 30px var(--neon-blue);
+        }
+
+        .neon-border {
+            box-shadow: 0 0 10px var(--neon-purple),
+                       inset 0 0 10px var(--neon-purple);
+        }
+
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .grid-bg {
+            background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+            background-size: 30px 30px;
+        }
+
+        @media (max-width: 768px) {
+            .game-block {
+                width: 25px;
+                height: 25px;
+            }
+        }
+
+        .control-btn {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .control-btn:active {
+            transform: scale(0.95);
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .ad-container {
+            min-height: 90px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
             display: flex;
-            align-items: center;
             justify-content: center;
-            gap: 1rem;
-            padding: 0.75rem;
+            align-items: center;
+            margin: 1rem 0;
+        }
+
+        .input-field {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--neon-purple);
+            box-shadow: 0 0 5px var(--neon-purple);
+        }
+
+        .btn {
+            background: rgba(179, 0, 255, 0.3);
+            color: white;
+            padding: 0.5rem 1rem;
             border-radius: 0.5rem;
             cursor: pointer;
             transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background: rgba(179, 0, 255, 0.5);
+        }
+
+        .leaderboard-item {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 0.5rem;
             margin-bottom: 0.5rem;
-            color: white;
-            font-weight: 500;
-        }
-
-        .facebook-btn {
-            background: #1877f2;
-        }
-
-        .google-btn {
-            background: #db4437;
-        }
-
-        .apple-btn {
-            background: #000000;
+            border-radius: 0.5rem;
         }
 
         .share-btn {
@@ -69,43 +143,16 @@
         .share-btn:hover {
             background: rgba(255, 255, 255, 0.2);
         }
-
-        #screenshot-preview {
-            max-width: 300px;
-            border-radius: 0.5rem;
-            margin: 1rem 0;
-        }
     </style>
 </head>
 <body class="grid-bg">
-    <!-- Auth Modal -->
-    <div id="auth-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <!-- Username Modal -->
+    <div id="username-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
         <div class="glass-effect p-8 rounded-xl max-w-md w-full mx-4">
-            <h2 class="text-2xl font-bold text-white mb-6 neon-text text-center">Sign In</h2>
+            <h2 class="text-2xl font-bold text-white mb-6 neon-text text-center">Enter Your Username</h2>
             
-            <!-- Social Login Buttons -->
-            <div class="space-y-4 mb-6">
-                <button onclick="signInWithFacebook()" class="social-btn facebook-btn w-full">
-                    <i class="fab fa-facebook"></i>
-                    Continue with Facebook
-                </button>
-                <button onclick="signInWithGoogle()" class="social-btn google-btn w-full">
-                    <i class="fab fa-google"></i>
-                    Continue with Google
-                </button>
-                <button onclick="signInWithApple()" class="social-btn apple-btn w-full">
-                    <i class="fab fa-apple"></i>
-                    Continue with Apple
-                </button>
-            </div>
-
-            <div class="text-center text-gray-400 my-4">- OR -</div>
-            
-            <!-- Regular Auth Form -->
-            <form id="auth-form" class="space-y-4">
+            <form id="username-form" class="space-y-4">
                 <input type="text" id="username" placeholder="Username" class="input-field" required>
-                <input type="email" id="email" placeholder="Email" class="input-field" required>
-                <input type="password" id="password" placeholder="Password" class="input-field" required>
                 
                 <!-- Difficulty Selection -->
                 <div class="mb-4">
@@ -127,16 +174,16 @@
         <div class="glass-effect p-8 rounded-xl max-w-md w-full mx-4">
             <h2 class="text-2xl font-bold text-white mb-6 neon-text text-center">Share Your Score</h2>
             
-            <img id="screenshot-preview" class="mx-auto" alt="Score screenshot">
+            <img id="screenshot-preview" class="mx-auto rounded-lg max-w-full mb-6" alt="Score screenshot">
             
-            <div class="flex gap-4 justify-center mt-6">
-                <button onclick="shareToFacebook()" class="share-btn">
-                    <i class="fab fa-facebook"></i>
-                    Share to Facebook
-                </button>
+            <div class="flex gap-4 justify-center">
                 <button onclick="shareToTwitter()" class="share-btn">
                     <i class="fab fa-twitter"></i>
                     Share to Twitter
+                </button>
+                <button onclick="copyShareLink()" class="share-btn">
+                    <i class="fas fa-link"></i>
+                    Copy Link
                 </button>
             </div>
             
@@ -144,11 +191,82 @@
         </div>
     </div>
 
-    <!-- Rest of the game HTML remains unchanged -->
+    <div class="min-h-screen flex flex-col items-center justify-center p-4 relative">
+        <!-- Background Animation -->
+        <div class="absolute inset-0 bg-gradient-to-br from-purple-900/20 to-blue-900/20"></div>
 
-    <!-- Footer Ads -->
+        <!-- Game Container -->
+        <div class="relative z-10 flex flex-col items-center">
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <h1 class="text-5xl font-bold text-white neon-text mb-4">TETRIS</h1>
+                <div class="flex gap-12 glass-effect rounded-xl p-4">
+                    <div class="text-center">
+                        <p class="text-gray-400 text-sm mb-1">SCORE</p>
+                        <p id="score" class="text-2xl font-bold text-white">0</p>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-gray-400 text-sm mb-1">LEVEL</p>
+                        <p id="level" class="text-2xl font-bold text-white">1</p>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-gray-400 text-sm mb-1">HIGH SCORE</p>
+                        <p id="highscore" class="text-2xl font-bold text-white">0</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Game Area -->
+            <div class="flex flex-col md:flex-row gap-8 items-start">
+                <!-- Leaderboard -->
+                <div class="glass-effect rounded-lg p-4 w-64">
+                    <h3 class="text-white text-xl mb-4">Leaderboard</h3>
+                    <div id="leaderboard" class="space-y-2">
+                        <!-- Leaderboard items will be added here -->
+                    </div>
+                </div>
+
+                <!-- Main Game Board -->
+                <div id="game-board" class="glass-effect rounded-lg p-2 neon-border"></div>
+                
+                <!-- Side Panel -->
+                <div class="flex flex-col gap-6">
+                    <!-- Player Info -->
+                    <div class="glass-effect rounded-lg p-4">
+                        <p class="text-gray-400 text-sm mb-2">PLAYER</p>
+                        <p id="player-name" class="text-white font-bold"></p>
+                    </div>
+
+                    <!-- Next Piece Preview -->
+                    <div class="glass-effect rounded-lg p-4">
+                        <p class="text-gray-400 text-sm mb-2">NEXT PIECE</p>
+                        <div id="next-piece" class="bg-opacity-30 bg-gray-800 rounded"></div>
+                    </div>
+                    
+                    <!-- Mobile Controls -->
+                    <div class="md:hidden flex flex-col gap-4 items-center">
+                        <button id="rotate-btn" class="control-btn rounded-full w-16 h-16 text-white text-2xl flex items-center justify-center">
+                            <i class="fas fa-redo-alt"></i>
+                        </button>
+                        <div class="flex gap-4">
+                            <button id="left-btn" class="control-btn rounded-full w-16 h-16 text-white text-2xl flex items-center justify-center">
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <button id="down-btn" class="control-btn rounded-full w-16 h-16 text-white text-2xl flex items-center justify-center">
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                            <button id="right-btn" class="control-btn rounded-full w-16 h-16 text-white text-2xl flex items-center justify-center">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer Ad -->
     <div class="fixed bottom-0 left-0 right-0 z-50">
-        <!-- Banner Ad -->
         <div class="ad-container w-full max-w-[728px] mx-auto">
             <ins class="adsbygoogle"
                  style="display:block"
@@ -157,40 +275,15 @@
                  data-ad-format="auto"
                  data-full-width-responsive="true"></ins>
         </div>
-
-        <!-- Side Banner Ad -->
-        <div class="hidden md:block ad-container w-[300px] h-[250px] absolute bottom-0 right-0">
-            <ins class="adsbygoogle"
-                 style="display:block"
-                 data-ad-client="ca-pub-5156494121502262"
-                 data-ad-slot="YOUR_SIDE_SLOT_ID"
-                 data-ad-format="rectangle"></ins>
-        </div>
     </div>
 
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <script src="tetris.js"></script>
     <script src="social.js"></script>
     <script>
         // Initialize ads
         window.onload = function() {
             (adsbygoogle = window.adsbygoogle || []).push({});
-            (adsbygoogle = window.adsbygoogle || []).push({});
-            
-            // Initialize Facebook SDK
-            FB.init({
-                appId: 'YOUR_FB_APP_ID',
-                cookie: true,
-                xfbml: true,
-                version: 'v12.0'
-            });
-            
-            // Initialize Apple Sign-In
-            AppleID.auth.init({
-                clientId: 'YOUR_APPLE_CLIENT_ID',
-                scope: 'name email',
-                redirectURI: 'https://your-redirect-uri.com/callback',
-                usePopup: true
-            });
         };
     </script>
 </body>
