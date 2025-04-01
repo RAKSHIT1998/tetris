@@ -4,6 +4,11 @@ function handleUsernameSubmit(event) {
     const username = document.getElementById('username').value;
     const difficulty = document.getElementById('difficulty').value;
     
+    if (!username) {
+        alert('Please enter a username');
+        return;
+    }
+    
     // Store user data
     const userData = {
         username: username,
@@ -17,7 +22,10 @@ function handleUsernameSubmit(event) {
     // Hide modal
     document.getElementById('username-modal').style.display = 'none';
     
-    // Start game
+    // Initialize game with user data
+    if (!window.tetrisGame) {
+        window.tetrisGame = new Tetris();
+    }
     window.tetrisGame.initGame(userData);
 }
 
@@ -110,7 +118,24 @@ function updateLeaderboard(newScore) {
 }
 
 // Initialize event listeners
-document.getElementById('username-form').addEventListener('submit', handleUsernameSubmit);
-
-// Load leaderboard on page load
-updateLeaderboard();
+document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('username-form');
+    if (form) {
+        form.addEventListener('submit', handleUsernameSubmit);
+    }
+    
+    // Check for existing user
+    const savedUser = localStorage.getItem('tetrisUser');
+    if (savedUser) {
+        const userData = JSON.parse(savedUser);
+        document.getElementById('player-name').textContent = userData.username;
+        document.getElementById('username-modal').style.display = 'none';
+        if (!window.tetrisGame) {
+            window.tetrisGame = new Tetris();
+        }
+        window.tetrisGame.initGame(userData);
+    }
+    
+    // Load leaderboard
+    updateLeaderboard();
+});
