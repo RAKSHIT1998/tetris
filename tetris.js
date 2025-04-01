@@ -79,7 +79,6 @@ class Tetris {
         this.initBoard();
         this.initNextPieceDisplay();
         this.initControls();
-        this.addParticleSystem();
         
         this.currentPiece = this.createPiece();
         this.nextPiece = this.createPiece();
