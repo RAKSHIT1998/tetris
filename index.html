@@ -24,11 +24,11 @@
             overflow: hidden;
             display: flex;
             flex-direction: column;
+            position: relative;
+            padding-bottom: 90px; /* Space for the ad banner */
         }
 
         .game-block {
-            width: 30px;
-            height: 30px;
             border: 1px solid rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(5px);
             transition: background-color 0.2s ease;
@@ -132,6 +132,7 @@
             padding: 10px;
             text-align: center;
             z-index: 1000;
+            min-height: 90px;
         }
 
         @media (max-width: 768px) {
@@ -148,7 +149,7 @@
         <div class="glass-effect p-8 rounded-xl max-w-md w-full mx-4">
             <h2 class="text-2xl font-bold text-white mb-6 neon-text text-center">Enter Your Username</h2>
             
-            <form id="username-form" class="space-y-4">
+            <form id="username-form" onsubmit="return false;" class="space-y-4">
                 <input type="text" id="username" placeholder="Username" class="input-field" required>
                 
                 <!-- Difficulty Selection -->
@@ -161,7 +162,7 @@
                     </select>
                 </div>
 
-                <button type="submit" class="btn w-full">Start Playing</button>
+                <button type="submit" onclick="startGame()" class="btn w-full">Start Playing</button>
             </form>
         </div>
     </div>
@@ -273,6 +274,25 @@
                  data-full-width-responsive="true"></ins>
         </div>
     </div>
+
+    <script>
+        function startGame() {
+            const username = document.getElementById('username').value;
+            const difficulty = document.getElementById('difficulty').value;
+            
+            if (!username) {
+                return;
+            }
+            
+            localStorage.setItem('tetrisUser', JSON.stringify({
+                username,
+                difficulty
+            }));
+            
+            document.getElementById('username-modal').style.display = 'none';
+            window.tetrisGame = new Tetris();
+        }
+    </script>
 
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>

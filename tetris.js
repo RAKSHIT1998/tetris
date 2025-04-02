@@ -6,11 +6,11 @@ function calculateBlockSize() {
     const minSize = 20;
     const maxSize = 35;
     const screenWidth = window.innerWidth;
-    const screenHeight = window.innerHeight;
+    const screenHeight = window.innerHeight - 90; // Account for ad banner
     
     // Calculate size based on screen dimensions
-    const widthBasedSize = Math.floor(screenWidth * 0.04);
-    const heightBasedSize = Math.floor((screenHeight - 100) / BOARD_HEIGHT);
+    const widthBasedSize = Math.floor((screenWidth * 0.8) / BOARD_WIDTH);
+    const heightBasedSize = Math.floor((screenHeight * 0.7) / BOARD_HEIGHT);
     
     // Use the smaller of the two sizes to ensure the board fits
     let size = Math.min(widthBasedSize, heightBasedSize);
@@ -20,6 +20,14 @@ function calculateBlockSize() {
     
     return size;
 }
+
+// Add resize event listener
+window.addEventListener('resize', () => {
+    BLOCK_SIZE = calculateBlockSize();
+    if (window.tetrisGame) {
+        window.tetrisGame.handleResize();
+    }
+});
 
 const SHAPES = {
     I: [[1, 1, 1, 1]],
@@ -80,15 +88,10 @@ class Tetris {
         this.combo = 0;
         
         // Hide advertisement container initially
-        const adContainer = document.querySelector('.ad-container');
+        const adContainer = document.querySelector('.footer-ad');
         if (adContainer) {
-            adContainer.style.display = 'block';
-            // Initialize the ad
-            (adsbygoogle = window.adsbygoogle || []).push({});
+            adContainer.style.display = 'none';
         }
-        
-        // Add resize listener
-        window.addEventListener('resize', this.handleResize.bind(this));
         
         // Check for existing user
         const savedUser = localStorage.getItem('tetrisUser');
@@ -101,7 +104,6 @@ class Tetris {
     }
 
     handleResize() {
-        BLOCK_SIZE = calculateBlockSize();
         this.initBoard();
         this.initNextPieceDisplay();
         this.drawBoard();
@@ -154,8 +156,9 @@ class Tetris {
     }
 
     initNextPieceDisplay() {
-        this.nextCanvas.style.width = BLOCK_SIZE * 4 + 'px';
-        this.nextCanvas.style.height = BLOCK_SIZE * 4 + 'px';
+        const nextSize = BLOCK_SIZE * 0.8;
+        this.nextCanvas.style.width = nextSize * 4 + 'px';
+        this.nextCanvas.style.height = nextSize * 4 + 'px';
         this.nextCanvas.style.position = 'relative';
         this.nextCanvas.innerHTML = '';
         
@@ -163,10 +166,10 @@ class Tetris {
             for (let x = 0; x < 4; x++) {
                 const block = document.createElement('div');
                 block.className = 'game-block absolute';
-                block.style.left = x * BLOCK_SIZE + 'px';
-                block.style.top = y * BLOCK_SIZE + 'px';
-                block.style.width = BLOCK_SIZE + 'px';
-                block.style.height = BLOCK_SIZE + 'px';
+                block.style.left = x * nextSize + 'px';
+                block.style.top = y * nextSize + 'px';
+                block.style.width = nextSize + 'px';
+                block.style.height = nextSize + 'px';
                 this.nextCanvas.appendChild(block);
             }
         }
@@ -405,6 +408,14 @@ class Tetris {
 
     showGameOver() {
         this.saveHighScore();
+        
+        // Show advertisement container
+        const adContainer = document.querySelector('.footer-ad');
+        if (adContainer) {
+            adContainer.style.display = 'block';
+            // Initialize the ad
+            (adsbygoogle = window.adsbygoogle || []).push({});
+        }
         
         const overlay = document.createElement('div');
         overlay.className = 'absolute inset-0 bg-black bg-opacity-75 flex items-center justify-center flex-col glass-effect';
