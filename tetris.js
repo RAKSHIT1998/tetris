@@ -1,6 +1,25 @@
 const BOARD_WIDTH = 10;
 const BOARD_HEIGHT = 20;
-const BLOCK_SIZE = window.innerWidth > 768 ? 30 : 25;
+let BLOCK_SIZE = calculateBlockSize();
+
+function calculateBlockSize() {
+    const minSize = 20;
+    const maxSize = 35;
+    const screenWidth = window.innerWidth;
+    const screenHeight = window.innerHeight;
+    
+    // Calculate size based on screen dimensions
+    const widthBasedSize = Math.floor(screenWidth * 0.04);
+    const heightBasedSize = Math.floor((screenHeight - 100) / BOARD_HEIGHT);
+    
+    // Use the smaller of the two sizes to ensure the board fits
+    let size = Math.min(widthBasedSize, heightBasedSize);
+    
+    // Clamp between min and max sizes
+    size = Math.max(minSize, Math.min(size, maxSize));
+    
+    return size;
+}
 
 const SHAPES = {
     I: [[1, 1, 1, 1]],
@@ -63,8 +82,13 @@ class Tetris {
         // Hide advertisement container initially
         const adContainer = document.querySelector('.ad-container');
         if (adContainer) {
-            adContainer.style.display = 'none';
+            adContainer.style.display = 'block';
+            // Initialize the ad
+            (adsbygoogle = window.adsbygoogle || []).push({});
         }
+        
+        // Add resize listener
+        window.addEventListener('resize', this.handleResize.bind(this));
         
         // Check for existing user
         const savedUser = localStorage.getItem('tetrisUser');
@@ -74,6 +98,14 @@ class Tetris {
             this.setDifficulty(userData.difficulty);
             this.initGame(userData);
         }
+    }
+
+    handleResize() {
+        BLOCK_SIZE = calculateBlockSize();
+        this.initBoard();
+        this.initNextPieceDisplay();
+        this.drawBoard();
+        this.drawNextPiece();
     }
 
     initGame(userData) {
@@ -373,14 +405,6 @@ class Tetris {
 
     showGameOver() {
         this.saveHighScore();
-        
-        // Show advertisement container
-        const adContainer = document.querySelector('.ad-container');
-        if (adContainer) {
-            adContainer.style.display = 'block';
-            // Initialize the ad
-            (adsbygoogle = window.adsbygoogle || []).push({});
-        }
         
         const overlay = document.createElement('div');
         overlay.className = 'absolute inset-0 bg-black bg-opacity-75 flex items-center justify-center flex-col glass-effect';

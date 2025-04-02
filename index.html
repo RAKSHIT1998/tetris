@@ -22,6 +22,8 @@
             touch-action: none;
             min-height: 100vh;
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
 
         .game-block {
@@ -52,13 +54,6 @@
         .grid-bg {
             background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px);
             background-size: 30px 30px;
-        }
-
-        @media (max-width: 768px) {
-            .game-block {
-                width: 25px;
-                height: 25px;
-            }
         }
 
         .control-btn {
@@ -126,6 +121,24 @@
 
         .share-btn:hover {
             background: rgba(255, 255, 255, 0.2);
+        }
+
+        .footer-ad {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 10px;
+            text-align: center;
+            z-index: 1000;
+        }
+
+        @media (max-width: 768px) {
+            .game-block {
+                width: 25px;
+                height: 25px;
+            }
         }
     </style>
 </head>
@@ -250,7 +263,7 @@
     </div>
 
     <!-- Footer Ad -->
-    <div class="fixed bottom-0 left-0 right-0 z-50">
+    <div class="footer-ad">
         <div class="ad-container w-full max-w-[728px] mx-auto">
             <ins class="adsbygoogle"
                  style="display:block"
@@ -262,6 +275,7 @@
     </div>
 
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
     <script src="tetris.js"></script>
     <script src="social.js"></script>
 </body>
