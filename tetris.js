@@ -60,6 +60,12 @@ class Tetris {
         this.lastDrop = 0;
         this.combo = 0;
         
+        // Hide advertisement container initially
+        const adContainer = document.querySelector('.ad-container');
+        if (adContainer) {
+            adContainer.style.display = 'none';
+        }
+        
         // Check for existing user
         const savedUser = localStorage.getItem('tetrisUser');
         if (savedUser) {
@@ -225,7 +231,7 @@ class Tetris {
     }
 
     movePiece(dx, dy) {
-        if (!this.currentPiece) return false;
+        if (!this.currentPiece || this.gameOver) return false;
         
         this.currentPiece.pos.x += dx;
         this.currentPiece.pos.y += dy;
@@ -240,7 +246,8 @@ class Tetris {
                 this.currentPiece = this.nextPiece;
                 this.nextPiece = this.createPiece();
                 
-                if (this.collision()) {
+                // Only check for game over when the piece is at the top
+                if (this.currentPiece.pos.y === 0 && this.collision()) {
                     this.gameOver = true;
                     this.showGameOver();
                 }
@@ -258,12 +265,20 @@ class Tetris {
         
         for (let y = 0; y < matrix.length; y++) {
             for (let x = 0; x < matrix[y].length; x++) {
-                if (matrix[y][x] && (
-                    !this.board[pos.y + y] ||
-                    !this.board[pos.y + y][pos.x + x] === undefined ||
-                    this.board[pos.y + y][pos.x + x]
-                )) {
-                    return true;
+                if (matrix[y][x]) {
+                    const boardY = pos.y + y;
+                    const boardX = pos.x + x;
+                    
+                    // Check boundaries
+                    if (boardX < 0 || boardX >= BOARD_WIDTH || 
+                        boardY >= BOARD_HEIGHT) {
+                        return true;
+                    }
+                    
+                    // Check collision with other pieces
+                    if (boardY >= 0 && this.board[boardY][boardX]) {
+                        return true;
+                    }
                 }
             }
         }
@@ -271,7 +286,7 @@ class Tetris {
     }
 
     rotatePiece() {
-        if (!this.currentPiece) return;
+        if (!this.currentPiece || this.gameOver) return;
         
         const matrix = this.currentPiece.matrix;
         const N = matrix.length;
@@ -297,7 +312,10 @@ class Tetris {
         this.currentPiece.matrix.forEach((row, y) => {
             row.forEach((value, x) => {
                 if (value) {
-                    this.board[this.currentPiece.pos.y + y][this.currentPiece.pos.x + x] = this.currentPiece.color;
+                    const boardY = this.currentPiece.pos.y + y;
+                    if (boardY >= 0) {  // Only merge if within board
+                        this.board[boardY][this.currentPiece.pos.x + x] = this.currentPiece.color;
+                    }
                 }
             });
         });
@@ -355,6 +373,14 @@ class Tetris {
 
     showGameOver() {
         this.saveHighScore();
+        
+        // Show advertisement container
+        const adContainer = document.querySelector('.ad-container');
+        if (adContainer) {
+            adContainer.style.display = 'block';
+            // Initialize the ad
+            (adsbygoogle = window.adsbygoogle || []).push({});
+        }
         
         const overlay = document.createElement('div');
         overlay.className = 'absolute inset-0 bg-black bg-opacity-75 flex items-center justify-center flex-col glass-effect';
